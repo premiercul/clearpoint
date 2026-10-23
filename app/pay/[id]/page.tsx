@@ -147,8 +147,12 @@ export default function StudentPaymentPage() {
       itemCostPayload = itemCostNum
     }
     if (pricing.mode === 'items') {
-      orderPayload = Object.fromEntries(Object.entries(qty).filter(([, q]) => q > 0))
-      if (Object.keys(orderPayload).length === 0) {
+      const order: Record<string, number> = {}
+      for (const [itemId, q] of Object.entries(qty) as [string, number][]) {
+        if (q > 0) order[itemId] = q
+      }
+      orderPayload = order
+      if (Object.keys(order).length === 0) {
         setError('Choose at least one item.')
         return
       }
