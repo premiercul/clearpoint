@@ -32,7 +32,7 @@ export default function PromotionsTab() {
   // form
   const [title, setTitle] = useState('')
   const [linkUrl, setLinkUrl] = useState('')
-  const [placement, setPlacement] = useState<PromoPlacement>('both')
+  const [placement, setPlacement] = useState<PromoPlacement>('dashboard')
   const [startsAt, setStartsAt] = useState(() => toLocalInput(new Date()))
   const [endsAt, setEndsAt] = useState('')
   const [live, setLive] = useState(true)

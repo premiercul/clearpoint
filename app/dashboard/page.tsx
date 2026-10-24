@@ -10,6 +10,7 @@ import { collectStoragePaths } from '@/lib/storagePaths'
 import { describePricing, resolvePricing } from '@/lib/pricing'
 import { TEMPLATES } from '@/lib/templates'
 import PromoBanner from '@/components/PromoBanner'
+import InstallButton from '@/components/InstallButton'
 import { removeImages } from '@/lib/storage'
 import type { Collection, Template } from '@/lib/types'
 
@@ -134,6 +135,7 @@ export default function DashboardPage() {
           <Link href="/onboarding" className="hidden sm:inline text-xs hover:underline" title="Change your account type">
             {TEMPLATES[accountType].label}
           </Link>
+          <InstallButton className="text-xs font-medium hover:underline" />
           <button onClick={signOut} className="text-red-600 hover:underline text-xs font-medium">
             Sign Out
           </button>

@@ -25,7 +25,8 @@ ClearPoint is a Next.js 14 (App Router) + Tailwind 3 + Supabase web app for Nige
 4. Creators cannot write `admin_disabled`, `admin_note`, `suspended` or `is_admin` (column grants). Every `admin_*` function re-checks `is_admin()` itself. Admin pages are not security; the database is.
 5. Sponsored banners appear only on the creator dashboard, the landing page and the payer's post-submit screen, never on the payment form, and links can opt out (`show_sponsored`).
 6. Any database change goes into `supabase/schema.sql` (idempotent) and the owner re-runs the whole file. Keep `privacy` page text and `lib/content.ts` true to what the code does.
-7. Internal links use `next/link`; no nested `<form>`; no `any`; Tailwind v3 classes only; images shrunk in the browser before upload (`lib/image.ts`).
+7. The service worker (`public/sw.js`) only shows `public/offline.html` when a page can't load offline. It must never cache pages, payments, receipts, API or Supabase responses. Icons come from `lib/brandIcon.tsx`; the manifest is `app/manifest.ts`.
+8. Internal links use `next/link`; no nested `<form>`; no `any`; Tailwind v3 classes only; images shrunk in the browser before upload (`lib/image.ts`).
 
 ## Environment variables
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`, optional `NEXT_PUBLIC_SUPPORT_WHATSAPP`, `NEXT_PUBLIC_CONTACT_EMAIL`, `CRON_SECRET`.

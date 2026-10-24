@@ -1,7 +1,6 @@
 // app/super-admin/page.tsx
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import OverviewTab from '@/components/admin/OverviewTab'
@@ -15,23 +14,49 @@ type Tab = 'overview' | 'links' | 'creators' | 'reports' | 'promotions'
 
 export default function SuperAdminPage() {
   const [overview, setOverview] = useState<AdminOverview | null>(null)
+  const [denied, setDenied] = useState<{ email: string | null; reason: string } | null>(null)
   const [tab, setTab] = useState<Tab>('overview')
-  const router = useRouter()
   const supabase = createClientComponentClient()
 
   const loadOverview = useCallback(async () => {
     // Authorisation happens in the database: every admin_* function checks profiles.is_admin.
     const { data, error } = await supabase.rpc('admin_overview')
     if (error || !data) {
-      router.replace('/')
+      // Say why instead of silently bouncing, so a missing admin flag is easy to tell from a missing function.
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      const msg = error?.message || ''
+      let reason = 'Could not load the admin tools. Please try again.'
+      if (msg.includes('forbidden')) {
+        reason = 'This account is not an admin. Set is_admin = true for this email in the profiles table.'
+      } else if (error?.code === 'PGRST202' || msg.includes('Could not find the function')) {
+        reason = 'The admin tools are not installed in the database yet. Run the latest supabase/schema.sql in the Supabase SQL Editor.'
+      } else if (error?.code === 'PGRST301' || msg.toLowerCase().includes('jwt')) {
+        reason = 'Your sign-in has expired. Sign out and sign in again.'
+      }
+      setDenied({ email: user?.email ?? null, reason })
       return
     }
     setOverview(data as AdminOverview)
-  }, [router, supabase])
+  }, [supabase])
 
   useEffect(() => {
     loadOverview()
   }, [loadOverview])
+
+  if (denied) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-3 px-4 text-center">
+        <h1 className="text-lg font-bold">No access to the admin area</h1>
+        <p className="text-sm text-gray-600 max-w-md">{denied.reason}</p>
+        <p className="text-xs text-gray-400">Signed in as {denied.email ?? 'nobody (not signed in)'}</p>
+        <Link href="/dashboard" className="text-xs text-gray-500 hover:underline">
+          ← Back to my dashboard
+        </Link>
+      </main>
+    )
+  }
 
   if (!overview) {
     return (

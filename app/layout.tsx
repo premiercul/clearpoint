@@ -1,6 +1,7 @@
 // app/layout.tsx
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
+import PwaRegister from '@/components/PwaRegister'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -30,6 +31,8 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
   },
   robots: { index: true, follow: true },
+  appleWebApp: { capable: true, title: SITE_NAME, statusBarStyle: 'default' },
+  formatDetection: { telephone: false },
 }
 
 export const viewport: Viewport = {
@@ -43,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en-NG">
       <body className="bg-white text-black antialiased selection:bg-black selection:text-white">
         {children}
+        <PwaRegister />
       </body>
     </html>
   )

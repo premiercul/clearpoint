@@ -100,3 +100,10 @@ The account type chosen at sign-up decides everything on the create-link form an
 3. Set `NEXT_PUBLIC_SITE_URL` to the live address and redeploy. In Supabase (Authentication, URL Configuration) set the Site URL and add `https://YOUR-SITE/auth/callback` to Redirect URLs; add the site to the Authorized JavaScript origins of your Google OAuth client.
 4. For the keep-alive ping add the GitHub secrets `SUPABASE_URL` and `SUPABASE_ANON_KEY` (or delete `.github/workflows/keepalive.yml`), and optionally set `CRON_SECRET` in Vercel.
 5. Vercel's free Hobby plan is limited to non-commercial use; sponsored banners make the site commercial, so plan for the Pro plan (or another host) when you start running ads.
+
+## Favicon and installable app
+
+- Tab icon: `app/icon.tsx`. iPhone home-screen icon: `app/apple-icon.tsx`. App icons for the manifest: `/pwa-icon/192`, `/pwa-icon/512` and `/pwa-icon/maskable` (all drawn from `lib/brandIcon.tsx`, so one change restyles every icon).
+- `app/manifest.ts` makes ClearPoint installable. It opens on `/dashboard` and has a "Create a link" shortcut. Creators see an "Install app" button in the dashboard bar (Chrome/Edge give a one-tap install; on iPhone it shows the Share, then Add to Home Screen steps).
+- `public/sw.js` only serves `public/offline.html` when a page can't load offline. It deliberately caches nothing else. It registers in production only.
+- After deploying, open `/icon`, `/apple-icon`, `/pwa-icon/192`, `/pwa-icon/512`, `/pwa-icon/maskable` and `/manifest.webmanifest` to check each one loads, then run Lighthouse (Chrome DevTools) to confirm the app is installable.

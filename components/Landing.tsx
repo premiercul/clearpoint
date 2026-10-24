@@ -127,7 +127,15 @@ export default function Landing() {
   const m = MOCKS[mockKey]
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get('error') === 'auth') {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    if (code) {
+      // Supabase sends people to "/?code=..." when the callback address isn't on its allow-list.
+      // Hand the code to the callback so sign-in still completes on this site.
+      window.location.replace(`/auth/callback?code=${encodeURIComponent(code)}`)
+      return
+    }
+    if (params.get('error') === 'auth') {
       setError('Sign-in did not complete. Please try again.')
     }
   }, [])
@@ -192,9 +200,6 @@ export default function Landing() {
           One fixed price, your delivery fee plus item cost, or a price list. You choose.
         </p>
       </section>
-
-      {/* Sponsored banner (renders nothing when no promotion is live) */}
-      <PromoBanner placement="landing" className="w-full px-6 sm:px-10 pb-10" />
 
       {/* Moments of need */}
       <section className="w-full px-6 sm:px-10 py-14 border-t border-gray-100">
@@ -382,6 +387,9 @@ export default function Landing() {
           </button>
         </div>
       </section>
+
+      {/* Sponsored banner: kept at the bottom so nothing competes with the pitch (renders nothing when no promotion is live) */}
+      <PromoBanner placement="landing" className="w-full px-6 sm:px-10 py-10" />
 
       {/* Footer */}
       <footer className="w-full px-6 sm:px-10 py-8 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-400 gap-4">
